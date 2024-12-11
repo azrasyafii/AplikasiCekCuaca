@@ -54,6 +54,54 @@ public class CekCuacaGUI extends javax.swing.JFrame {
     }
     }
     
+    private void loadDataFromCSV(String filePath) {
+    try {
+        BufferedReader br = new BufferedReader(new FileReader(filePath));
+        DefaultTableModel model = (DefaultTableModel) tableCuaca.getModel();
+        model.setRowCount(0); // Clear existing rows
+
+        String line = br.readLine(); // Skip the header
+        while ((line = br.readLine()) != null) {
+            String[] data = line.split(","); // Split by comma
+            model.addRow(data); // Add row to table model
+        }
+        br.close();
+        JOptionPane.showMessageDialog(this, "Data berhasil dimuat dari file: " + filePath);
+    } catch (FileNotFoundException ex) {
+        JOptionPane.showMessageDialog(this, "File tidak ditemukan: " + ex.getMessage());
+    } catch (IOException ex) {
+        JOptionPane.showMessageDialog(this, "Terjadi kesalahan saat membaca file: " + ex.getMessage());
+    }
+    }
+    
+    private void saveDataToCSV(String filePath) {
+    try {
+        BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
+        DefaultTableModel model = (DefaultTableModel) tableCuaca.getModel();
+        
+        // Tulis header tabel
+        int columnCount = model.getColumnCount();
+        for (int i = 0; i < columnCount; i++) {
+            bw.write(model.getColumnName(i) + (i < columnCount - 1 ? "," : ""));
+        }
+        bw.newLine(); // New line after header
+        
+        // Tulis data tabel
+        int rowCount = model.getRowCount();
+        for (int i = 0; i < rowCount; i++) {
+            for (int j = 0; j < columnCount; j++) {
+                bw.write(model.getValueAt(i, j) + (j < columnCount - 1 ? "," : ""));
+            }
+            bw.newLine(); // New line after each row
+        }
+        bw.close();
+        JOptionPane.showMessageDialog(this, "Data berhasil disimpan ke file: " + filePath);
+    } catch (IOException ex) {
+        JOptionPane.showMessageDialog(this, "Terjadi kesalahan saat menyimpan file: " + ex.getMessage());
+    }
+}
+    
+   
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -77,6 +125,7 @@ public class CekCuacaGUI extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tableCuaca = new javax.swing.JTable();
         btnSimpanData = new javax.swing.JButton();
+        btnMuatData = new javax.swing.JButton();
 
         jTextField3.setText("jTextField3");
 
@@ -150,6 +199,15 @@ public class CekCuacaGUI extends javax.swing.JFrame {
             }
         });
 
+        btnMuatData.setBackground(new java.awt.Color(51, 255, 255));
+        btnMuatData.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnMuatData.setText("MUAT DATA");
+        btnMuatData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMuatDataActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -185,10 +243,11 @@ public class CekCuacaGUI extends javax.swing.JFrame {
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                                         .addComponent(btnCekCuaca)
                                         .addGap(10, 10, 10))))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnSimpanData)
-                                .addGap(10, 10, 10)))))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(btnSimpanData)
+                                    .addComponent(btnMuatData))))))
                 .addContainerGap(23, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -219,7 +278,9 @@ public class CekCuacaGUI extends javax.swing.JFrame {
                         .addGap(24, 24, 24))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addComponent(btnSimpanData)
-                        .addGap(138, 138, 138))))
+                        .addGap(18, 18, 18)
+                        .addComponent(btnMuatData)
+                        .addGap(78, 78, 78))))
         );
 
         getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 660, 560));
@@ -307,34 +368,41 @@ public class CekCuacaGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSimpanLokasiActionPerformed
 
     private void btnSimpanDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanDataActionPerformed
-       try {
-        // Nama file tempat data disimpan
-        String fileName = "data_cuaca.csv";
-        FileWriter writer = new FileWriter(fileName);
-
-        // Header kolom untuk file CSV
-        writer.append("Lokasi,Kondisi Cuaca,Suhu\n");
-
-        // Ambil data dari JTable
-        DefaultTableModel model = (DefaultTableModel) tableCuaca.getModel();
-        for (int i = 0; i < model.getRowCount(); i++) {
-            for (int j = 0; j < model.getColumnCount(); j++) {
-                writer.append(model.getValueAt(i, j).toString());
-                if (j < model.getColumnCount() - 1) {
-                    writer.append(",");
-                }
-            }
-            writer.append("\n");
+       JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setDialogTitle("Pilih Lokasi untuk Menyimpan Data CSV");
+    fileChooser.setAcceptAllFileFilterUsed(false);
+    fileChooser.addChoosableFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("File CSV", "csv"));
+    
+    // Show the save dialog
+    int result = fileChooser.showSaveDialog(this);  
+    if (result == JFileChooser.APPROVE_OPTION) {
+        File selectedFile = fileChooser.getSelectedFile();
+        
+        // Jika file tidak berakhiran .csv, tambahkan ekstensi tersebut
+        if (!selectedFile.getName().endsWith(".csv")) {
+            selectedFile = new File(selectedFile.getAbsolutePath() + ".csv");
         }
 
-        writer.flush();
-        writer.close();
-
-        JOptionPane.showMessageDialog(this, "Data berhasil disimpan ke file: " + fileName);
-    } catch (Exception ex) {
-        JOptionPane.showMessageDialog(this, "Gagal menyimpan data: " + ex.getMessage());
+        String filePath = selectedFile.getAbsolutePath();
+        saveDataToCSV(filePath);
     }
     }//GEN-LAST:event_btnSimpanDataActionPerformed
+
+    private void btnMuatDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMuatDataActionPerformed
+        JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setDialogTitle("Pilih File CSV untuk Dimuat");
+    fileChooser.setAcceptAllFileFilterUsed(false);
+    fileChooser.addChoosableFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("File CSV", "csv"));
+
+    int result = fileChooser.showOpenDialog(this);  // Show file chooser dialog
+    if (result == JFileChooser.APPROVE_OPTION) {
+        File selectedFile = fileChooser.getSelectedFile();
+        String filePath = selectedFile.getAbsolutePath();
+        
+        // Panggil fungsi untuk memuat data dari file CSV
+        loadDataFromCSV(filePath);
+    }
+    }//GEN-LAST:event_btnMuatDataActionPerformed
 
     /**
      * @param args the command line arguments
@@ -373,6 +441,7 @@ public class CekCuacaGUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCekCuaca;
+    private javax.swing.JButton btnMuatData;
     private javax.swing.JButton btnSimpanData;
     private javax.swing.JButton btnSimpanLokasi;
     private javax.swing.JComboBox<String> cmbLokasiFavorit;
