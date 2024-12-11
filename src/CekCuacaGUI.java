@@ -46,6 +46,7 @@ public class CekCuacaGUI extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         txtKondisiCuaca = new javax.swing.JTextField();
         lblIcon = new javax.swing.JLabel();
+        btnSimpanLokasi = new javax.swing.JButton();
 
         jTextField3.setText("jTextField3");
 
@@ -89,6 +90,15 @@ public class CekCuacaGUI extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         jLabel5.setText("SUHU");
 
+        btnSimpanLokasi.setBackground(new java.awt.Color(255, 51, 51));
+        btnSimpanLokasi.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        btnSimpanLokasi.setText("SIMPAN LOKASI");
+        btnSimpanLokasi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimpanLokasiActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -105,8 +115,12 @@ public class CekCuacaGUI extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtInputLokasi)
                             .addComponent(cmbLokasiFavorit, 0, 194, Short.MAX_VALUE))
-                        .addGap(28, 28, 28)
-                        .addComponent(btnCekCuaca))
+                        .addGap(27, 27, 27)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnSimpanLokasi)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(btnCekCuaca)
+                                .addGap(10, 10, 10))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addGap(18, 18, 18)
@@ -115,25 +129,22 @@ public class CekCuacaGUI extends javax.swing.JFrame {
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtSuhu, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(txtInputLokasi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(cmbLokasiFavorit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(31, 31, 31)
-                        .addComponent(btnCekCuaca)))
-                .addGap(38, 38, 38)
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(txtInputLokasi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCekCuaca))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(cmbLokasiFavorit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSimpanLokasi))
+                .addGap(36, 36, 36)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jLabel5)
@@ -141,7 +152,7 @@ public class CekCuacaGUI extends javax.swing.JFrame {
                     .addComponent(txtKondisiCuaca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(lblIcon)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(233, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 610, 390));
@@ -208,6 +219,32 @@ public class CekCuacaGUI extends javax.swing.JFrame {
         txtInputLokasi.setText(cmbLokasiFavorit.getSelectedItem().toString());
     }//GEN-LAST:event_cmbLokasiFavoritItemStateChanged
 
+    private void btnSimpanLokasiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanLokasiActionPerformed
+        String lokasiBaru = txtInputLokasi.getText().trim(); // Ambil teks lokasi
+
+    // Periksa apakah input tidak kosong
+    if (!lokasiBaru.isEmpty()) {
+        // Cek apakah lokasi sudah ada di daftar
+        boolean sudahAda = false;
+        for (int i = 0; i < cmbLokasiFavorit.getItemCount(); i++) {
+            if (cmbLokasiFavorit.getItemAt(i).equalsIgnoreCase(lokasiBaru)) {
+                sudahAda = true;
+                break;
+            }
+        }
+
+        // Tambahkan lokasi ke daftar jika belum ada
+        if (!sudahAda) {
+            cmbLokasiFavorit.addItem(lokasiBaru);
+            JOptionPane.showMessageDialog(this, "Lokasi berhasil disimpan ke favorit!");
+        } else {
+            JOptionPane.showMessageDialog(this, "Lokasi sudah ada di daftar favorit.");
+        }
+    } else {
+        JOptionPane.showMessageDialog(this, "Masukkan lokasi terlebih dahulu.");
+    }
+    }//GEN-LAST:event_btnSimpanLokasiActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -245,6 +282,7 @@ public class CekCuacaGUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCekCuaca;
+    private javax.swing.JButton btnSimpanLokasi;
     private javax.swing.JComboBox<String> cmbLokasiFavorit;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
